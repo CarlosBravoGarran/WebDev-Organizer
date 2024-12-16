@@ -3,31 +3,31 @@ import shutil
 import sys
 
 def eliminar_directorios_vacios(src_folder):
-    # Recorre todos los directorios y subdirectorios
-    for root, dirs, files in os.walk(src_folder, topdown=False):  # topdown=False para empezar por los más profundos
+    for root, dirs, files in os.walk(src_folder, topdown=False):
         for dir in dirs:
             dir_path = os.path.join(root, dir)
-            if not os.listdir(dir_path):  # Comprueba si el directorio está vacío
-                os.rmdir(dir_path)  # Elimina directorios vacíos
+            if not os.listdir(dir_path):
+                os.rmdir(dir_path)
                 print(f"Eliminado directorio vacío: {dir_path}")
 
 def organizar_por_extension(src_folder):
     extensions_paths = {
         '.js': 'scripts',
         '.css': 'styles',
-        '.pdf': 'docs'
+        '.pdf': 'docs',
+        '.ttf': 'fonts'  # Nuevo directorio para fuentes
     }
-    image_extensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff']
-    images_dir = os.path.join(src_folder, 'images')  # Directorio de imágenes en la carpeta raíz
+    image_extensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp']
+    images_dir = os.path.join(src_folder, 'images')
     os.makedirs(images_dir, exist_ok=True)
-    
-    for root, dirs, files in os.walk(src_folder):
+
+    for root, dirs, files in os.walk(src_folder, topdown=False):
         for file in files:
             if file == 'index.html':
-                continue  # No mover el index.html
+                continue
             file_path = os.path.join(root, file)
             _, ext = os.path.splitext(file)
-            
+
             if ext in image_extensions:
                 target_path = images_dir
             elif ext in extensions_paths:
@@ -43,23 +43,26 @@ def organizar_por_extension(src_folder):
 
 def organizar_por_funcion(src_folder):
     image_extensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp']
-    images_dir = os.path.join(src_folder, 'images')  # Directorio de imágenes en la carpeta raíz
+    images_dir = os.path.join(src_folder, 'images')
     os.makedirs(images_dir, exist_ok=True)
-    
-    for root, dirs, files in os.walk(src_folder):
+
+    for root, dirs, files in os.walk(src_folder, topdown=False):
         for file in files:
             if file == 'index.html':
-                continue  # No mover el index.html
+                continue
             file_path = os.path.join(root, file)
             _, ext = os.path.splitext(file)
-            
+
             if ext in image_extensions:
                 target_path = images_dir
             elif ext == '.pdf':
                 target_path = os.path.join(src_folder, 'docs')
                 os.makedirs(target_path, exist_ok=True)
+            elif ext == '.ttf':  # Manejo de fuentes en función por función
+                target_path = os.path.join(src_folder, 'fonts')
+                os.makedirs(target_path, exist_ok=True)
             else:
-                target_path = os.path.join(src_folder, file.rsplit('.', 1)[0])  # Crea directorios basados en el nombre sin la extensión
+                target_path = os.path.join(src_folder, file.rsplit('.', 1)[0])
                 os.makedirs(target_path, exist_ok=True)
 
             shutil.move(file_path, os.path.join(target_path, file))

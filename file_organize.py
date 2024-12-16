@@ -15,16 +15,19 @@ def organizar_por_extension(src_folder):
         '.js': 'scripts',
         '.css': 'styles',
         '.pdf': 'docs',
-        '.ttf': 'fonts'  # Nuevo directorio para fuentes
+        '.ttf': 'fonts'  # Directorio para fuentes
     }
     image_extensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp']
     images_dir = os.path.join(src_folder, 'images')
     os.makedirs(images_dir, exist_ok=True)
 
-    for root, dirs, files in os.walk(src_folder, topdown=False):
+    ignore_files_dirs = {'readme.md', '.gitignore', '.git'}  # Archivos y directorios a ignorar
+
+    for root, dirs, files in os.walk(src_folder, topdown=True):
+        files = [f for f in files if f.lower() not in ignore_files_dirs]
+        dirs[:] = [d for d in dirs if d not in ignore_files_dirs]  # Modifica la lista dirs in-place
+
         for file in files:
-            if file == 'index.html':
-                continue
             file_path = os.path.join(root, file)
             _, ext = os.path.splitext(file)
 
@@ -46,10 +49,13 @@ def organizar_por_funcion(src_folder):
     images_dir = os.path.join(src_folder, 'images')
     os.makedirs(images_dir, exist_ok=True)
 
-    for root, dirs, files in os.walk(src_folder, topdown=False):
+    ignore_files_dirs = {'readme.md', '.gitignore', '.git', 'index.html'}  # Archivos y directorios a ignorar
+
+    for root, dirs, files in os.walk(src_folder, topdown=True):
+        files = [f for f in files if f.lower() not in ignore_files_dirs]
+        dirs[:] = [d for d in dirs if d not in ignore_files_dirs]  # Modifica la lista dirs in-place
+
         for file in files:
-            if file == 'index.html':
-                continue
             file_path = os.path.join(root, file)
             _, ext = os.path.splitext(file)
 
@@ -58,7 +64,7 @@ def organizar_por_funcion(src_folder):
             elif ext == '.pdf':
                 target_path = os.path.join(src_folder, 'docs')
                 os.makedirs(target_path, exist_ok=True)
-            elif ext == '.ttf':  # Manejo de fuentes en función por función
+            elif ext == '.ttf':
                 target_path = os.path.join(src_folder, 'fonts')
                 os.makedirs(target_path, exist_ok=True)
             else:

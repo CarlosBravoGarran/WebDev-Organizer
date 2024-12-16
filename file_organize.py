@@ -2,37 +2,36 @@ import os
 import shutil
 import sys
 
-def eliminar_directorios_vacios(src_folder):
+def remove_empty_dirs(src_folder):
     for root, dirs, files in os.walk(src_folder, topdown=False):
         for dir in dirs:
             dir_path = os.path.join(root, dir)
             if not os.listdir(dir_path):
                 os.rmdir(dir_path)
-                print(f"Eliminado directorio vacío: {dir_path}")
 
-def organizar_por_extension(src_folder):
+def ext_organize(src_folder):
     extensions_paths = {
         '.js': 'scripts',
         '.css': 'styles',
         '.pdf': 'docs',
-        '.ttf': 'fonts'  # Directorio para fuentes
+        '.ttf': 'fonts'
     }
     image_extensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp']
     images_dir = os.path.join(src_folder, 'images')
     os.makedirs(images_dir, exist_ok=True)
     
-    html_dir = os.path.join(src_folder, 'html')  # Directorio para otros archivos HTML
+    html_dir = os.path.join(src_folder, 'html')
     os.makedirs(html_dir, exist_ok=True)
 
-    ignore_files_dirs = {'readme.md', '.gitignore', '.git'}  # Archivos y directorios a ignorar
+    ignore_files_dirs = {'readme.md', '.gitignore', '.git'}  # Ignored directories and files
 
     for root, dirs, files in os.walk(src_folder, topdown=True):
         files = [f for f in files if f.lower() not in ignore_files_dirs]
-        dirs[:] = [d for d in dirs if d not in ignore_files_dirs]  # Modifica la lista dirs in-place
+        dirs[:] = [d for d in dirs if d not in ignore_files_dirs]
 
         for file in files:
             if file.lower() == 'index.html':
-                continue  # No mover index.html
+                continue
             file_path = os.path.join(root, file)
             _, ext = os.path.splitext(file)
 
@@ -48,19 +47,19 @@ def organizar_por_extension(src_folder):
 
             shutil.move(file_path, os.path.join(target_path, file))
 
-    eliminar_directorios_vacios(src_folder)
-    print("Archivos organizados por extensión incluyendo imágenes en 'images' y HTML en 'html'.")
+    remove_empty_dirs(src_folder)
+    print("Files organized by extension.")
 
-def organizar_por_funcion(src_folder):
+def section_organize(src_folder):
     image_extensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp']
     images_dir = os.path.join(src_folder, 'images')
     os.makedirs(images_dir, exist_ok=True)
 
-    ignore_files_dirs = {'readme.md', '.gitignore', '.git', 'index.html'}  # Archivos y directorios a ignorar
+    ignore_files_dirs = {'readme.md', '.gitignore', '.git', 'index.html'}  # Ignored directories and files
 
     for root, dirs, files in os.walk(src_folder, topdown=True):
         files = [f for f in files if f.lower() not in ignore_files_dirs]
-        dirs[:] = [d for d in dirs if d not in ignore_files_dirs]  # Modifica la lista dirs in-place
+        dirs[:] = [d for d in dirs if d not in ignore_files_dirs]
 
         for file in files:
             file_path = os.path.join(root, file)
@@ -80,26 +79,25 @@ def organizar_por_funcion(src_folder):
 
             shutil.move(file_path, os.path.join(target_path, file))
 
-    eliminar_directorios_vacios(src_folder)
-    print("Archivos organizados por función incluyendo imágenes en 'images'.")
+    remove_empty_dirs(src_folder)
+    print("Files organized by section.")
 
 def menu():
     if len(sys.argv) != 2:
-        print("Uso: python file_organize.py <directorio>")
+        print("Use: python file_organize.py <source_directory>")
         sys.exit(1)
     
     source_directory = sys.argv[1]
-    print("Selecciona el método de organización de archivos:")
-    print("1. Organizar por extensión")
-    print("2. Organizar por función")
-    choice = input("Introduce tu elección (1 o 2): ")
+    print("Select an organization method:")
+    print(" 1.By extension")
+    print(" 2.By function")
+    choice = input("Enter your choice (1 or 2): ")
     
     if choice == '1':
-        organizar_por_extension(source_directory)
+        ext_organize(source_directory)
     elif choice == '2':
-        organizar_por_funcion(source_directory)
+        section_organize(source_directory)
     else:
-        print("Opción no válida. Por favor, introduce 1 o 2.")
+        print("Invalid choice. Please enter 1 or 2.")
 
-# Ejecutar el menú
 menu()

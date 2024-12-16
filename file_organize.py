@@ -20,6 +20,9 @@ def organizar_por_extension(src_folder):
     image_extensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp']
     images_dir = os.path.join(src_folder, 'images')
     os.makedirs(images_dir, exist_ok=True)
+    
+    html_dir = os.path.join(src_folder, 'html')  # Directorio para otros archivos HTML
+    os.makedirs(html_dir, exist_ok=True)
 
     ignore_files_dirs = {'readme.md', '.gitignore', '.git'}  # Archivos y directorios a ignorar
 
@@ -28,10 +31,14 @@ def organizar_por_extension(src_folder):
         dirs[:] = [d for d in dirs if d not in ignore_files_dirs]  # Modifica la lista dirs in-place
 
         for file in files:
+            if file.lower() == 'index.html':
+                continue  # No mover index.html
             file_path = os.path.join(root, file)
             _, ext = os.path.splitext(file)
 
-            if ext in image_extensions:
+            if file.endswith('.html'):
+                target_path = html_dir
+            elif ext in image_extensions:
                 target_path = images_dir
             elif ext in extensions_paths:
                 target_path = os.path.join(src_folder, extensions_paths[ext])
@@ -42,7 +49,7 @@ def organizar_por_extension(src_folder):
             shutil.move(file_path, os.path.join(target_path, file))
 
     eliminar_directorios_vacios(src_folder)
-    print("Archivos organizados por extensión incluyendo imágenes en 'images'.")
+    print("Archivos organizados por extensión incluyendo imágenes en 'images' y HTML en 'html'.")
 
 def organizar_por_funcion(src_folder):
     image_extensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp']

@@ -398,3 +398,6 @@ FodyWeavers.xsd
 *.sln.iml
 # Python virtual environment
 venv/
+
+# macOS system files
+.DS_Store
